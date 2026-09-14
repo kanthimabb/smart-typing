@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART TYPING ADVENTURE - ห้องเรียนครูกัณฑิมา ป.2</title>
+    <style>
+        /* Import Google Fonts for modern rounded fonts suitable for children */
+        @import url('https://fonts.googleapis.com/css2?family=Itim&family=Kanit:wght@400;700;800&display=swap');
+
+        :root {
+            --primary: #0077b6;
+            --primary-light: #90e0ef;
+            --accent: #ffb703;
+            --accent-orange: #fb8500;
+            --bg-ocean: #03045e;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --key-default: #f8f9fa;
+            --key-active: #2ec4b6;
+            --key-shift: #fb8500;
+            --text-dark: #212529;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* Globally apply 'Itim' rounded font for children, fallback to Kanit and Comic Sans */
+            font-family: 'Itim', 'Kanit', 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(180deg, #0077b6 0%, #03045e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* Bubble Animation */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            bottom: -50px;
+            animation: float-bubble 15s infinite ease-in;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float-bubble {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-110vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        header {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h1.title {
+            font-family: 'Itim', cursive, sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ffffff, #ffb703);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-teacher {
+            background-color: var(--accent);
+            color: var(--bg-ocean);
+            font-weight: bold;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn-dashboard {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-dashboard:hover {
+            background-color: var(--accent);
+            color: var(--bg-ocean);
+            border-color: var(--accent);
+        }
+
+        .main-container {
+            width: 95%;
+            max-width: 950px;
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            color: var(--text-dark);
+            z-index: 10;
+            margin-bottom: 30px;
+            position: relative;
+            min-height: 520px;
+        }
+
+        /* Character Smarty */
+        .smarty-container {
+            position: absolute;
+            top: -75px;
+            right: 40px;
+            width: 130px;
+            height: 130px;
+            z-index: 12;
+            filter: drop-shadow(0 6px 8px rgba(0,0,0,0.3));
+            animation: hover-smarty 3s ease-in-out infinite;
+        }
+
+        @keyframes hover-smarty {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .smarty-speech {
+            position: absolute;
+            top: -85px;
+            right: 170px;
+            background-color: white;
+            color: var(--bg-ocean);
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            font-weight: bold;
+            font-size: 20px; /* Big font size for instructions */
+            max-width: 320px;
+            z-index: 12;
+            line-height: 1.4;
+        }
+
+        .smarty-speech::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 0 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent transparent white;
+        }
+
+        /* Screen States */
+        .screen-state {
+            display: none;
+        }
+
+        .screen-state.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mission Menu Layout */
+        .menu-title {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        .menu-subtitle {
+            text-align: center;
+            color: #475569;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .mission-card {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border: 3px solid #0284c7;
+            border-radius: 18px;
+            padding: 22px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(2, 132, 199, 0.2);
+            background: linear-gradient(135deg, #bae6fd 0%, #7dd3fc 100%);
+        }
+
+        .mission-badge {
+            background-color: var(--accent-orange);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            position: absolute;
+            top: -12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .mission-card-icon {
+            font-size: 44px;
+        }
+
+        .mission-card h3 {
+            font-size: 18px;
+            color: #0369a1;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .mission-card p {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.3;
+        }
+
+        .btn-start {
+            background-color: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 18px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+        }
+
+        /* Input Form Screen */
+        .input-group {
+            margin: 15px 0;
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--bg-ocean);
+        }
+
+        .input-group input {
+            padding: 12px 18px;
+            border: 2.5px solid #cbd5e1;
+            border-radius: 15px;
+            font-size: 22px; /* Larger input font */
+            font-weight: bold;
+            outline: none;
+            text-align: center;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-large {
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 14px 45px;
+            border-radius: 30px;
+            font-size: 22px; /* Bigger button font */
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            margin-top: 15px;
+        }
+
+        .btn-large:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+        }
+
+        /* Typing Board (Enlarged for young children) */
+        .typing-prompt-box {
+            background-color: #f1f5f9;
+            width: 100%;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 15px;
+            font-size: 54px; /* Huge text size for Grade 2 */
+            line-height: 1.6;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 5px; /* Wider spacing to see letter-by-letter clearly */
+            border: 3px solid #cbd5e1;
+            position: relative;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .char-correct {
+            color: #10b981;
+            background-color: #d1fae5;
+            padding: 0 4px;
+            border-radius: 6px;
+        }
+
+        .char-incorrect {
+            color: #ef4444;
+            background-color: #fee2e2;
+            text-decoration: underline;
+            padding: 0 4px;
+            border-radius: 6px;
+            animation: shake 0.2s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .char-current {
+            border-bottom: 5px solid var(--primary);
+            background-color: #dbeafe;
+            padding: 0 4px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        /* Stats Panel */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #f8fafc;
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 15px;
+            color: #64748b;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 26px; /* Bigger stats numbers */
+            color: var(--bg-ocean);
+            font-weight: 800;
+        }
+
+        /* On-Screen Keyboard */
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: #334155;
+            padding: 18px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 850px;
+            margin-top: 15px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .key {
+            background-color: var(--key-default);
+            border: none;
+            border-radius: 10px;
+            height: 56px; /* Taller keys */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px; /* Bigger key text font */
+            font-weight: 800;
+            color: #1e293b;
+            box-shadow: 0 5px 0px #cbd5e1;
+            transition: all 0.1s ease;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .key[data-key="char"] {
+            width: 54px; /* Wider keys */
+        }
+
+        .key[data-key="space"] {
+            width: 280px; /* Wider Spacebar */
+            height: 56px;
+        }
+
+        .key[data-key="shift-l"], .key[data-key="shift-r"] {
+            width: 95px;
+            background-color: #cbd5e1;
+            color: #334155;
+            font-size: 18px;
+        }
+
+        .key.active-key {
+            background-color: var(--key-active) !important;
+            color: white !important;
+            box-shadow: 0 5px 0px #0f766e !important;
+            transform: translateY(1px);
+        }
+
+        .key.shift-highlight {
+            background-color: var(--key-shift) !important;
+            color: white !important;
+            box-shadow: 0 5px 0px #c2410c !important;
+            animation: pulse-shift 0.8s infinite alternate;
+        }
+
+        .finger-guide-box {
+            margin-top: 15px;
+            font-size: 18px; /* Bigger finger guide message font */
+            font-weight: bold;
+            color: #475569;
+            text-align: center;
+            background-color: #f0fdf4;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px dashed #86efac;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Certificate / Test Results */
+        .cert-card {
+            background: radial-gradient(circle, #fffbeb 0%, #fef3c7 100%);
+            border: 6px double #d97706;
+            border-radius: 22px;
+            width: 100%;
+            max-width: 600px;
+            padding: 35px;
+            text-align: center;
+            color: #78350f;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .cert-medal {
+            font-size: 70px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
+
+        .cert-title {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #92400e;
+            margin-bottom: 5px;
+        }
+
+        .cert-sub {
+            font-size: 16px;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .cert-name {
+            font-size: 30px;
+            font-weight: 800;
+            border-bottom: 2px dashed #92400e;
+            display: inline-block;
+            padding: 0 25px;
+            margin-bottom: 20px;
+        }
+
+        .cert-score-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cert-score-box {
+            background-color: rgba(255,255,255,0.7);
+            border: 1.5px solid #f59e0b;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .cert-score-val {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        /* Dashboard Table */
+        .dash-table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        .dash-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        .dash-table th, .dash-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dash-table th {
+            background-color: #f1f5f9;
+            color: var(--bg-ocean);
+            font-weight: bold;
+        }
+
+        .dash-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .dash-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .btn-action {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-action-primary {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-action-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-action-secondary {
+            background-color: #64748b;
+            color: white;
+        }
+
+        .btn-back-menu {
+            margin-top: 20px;
+            background-color: #64748b;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .btn-back-menu:hover {
+            background-color: #475569;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bubbles -->
+    <div class="bubble" style="width: 25px; height: 25px; left: 10%; animation-delay: 0s; animation-duration: 12s;"></div>
+    <div class="bubble" style="width: 45px; height: 45px; left: 30%; animation-delay: 2s; animation-duration: 15s;"></div>
+    <div class="bubble" style="width: 20px; height: 20px; left: 55%; animation-delay: 1s; animation-duration: 10s;"></div>
+    <div class="bubble" style="width: 35px; height: 35px; left: 80%; animation-delay: 4s; animation-duration: 14s;"></div>
+    <div class="bubble" style="width: 50px; height: 50px; left: 90%; animation-delay: 6s; animation-duration: 18s;"></div>
+
+    <header>
+        <div class="logo-container">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#bae6fd" stroke="#0284c7" stroke-width="6"/>
+                <path d="M25 50 C40 30, 60 30, 75 50 C60 70, 40 70, 25 50 Z" fill="#0284c7"/>
+                <circle cx="65" cy="45" r="5" fill="white"/>
+                <circle cx="65" cy="45" r="2.5" fill="black"/>
+                <path d="M75 50 L85 45 L80 50 L85 55 Z" fill="#fb8500"/>
+            </svg>
+            <div>
+                <h1 class="title">SMART TYPING ADVENTURE</h1>
+                <p style="font-size: 13px; color: #bae6fd; font-weight: bold;">ห้องเรียนวิทยาการคำนวณ ป.2 | สื่อสนับสนุน SOLVER Model</p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="badge-teacher">ครูกัณฑิมา บุญเรือน</div>
+            <button class="btn-dashboard" onclick="switchScreen('teacher-panel')">แดชบอร์ดครู 📊</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Character Smarty Speech Bubble -->
+        <div class="smarty-speech" id="smarty-bubble">สวัสดีจ้าเด็ก ๆ ฉันคือปลาโบราณ "Smarty" มาท้าทายภารกิจผจญภัยพิมพ์สนุก 5 ด่านกันนะ!</div>
+        <div class="smarty-container">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 50 L2 35 C0 30, 0 70, 2 65 Z" fill="#00b4d8" stroke="#0077b6" stroke-width="2"/>
+                <path d="M15 50 L4 42 C3 38, 3 62, 4 58 Z" fill="#ffb703"/>
+                <path d="M45 72 C35 85, 30 80, 40 70 Z" fill="#00b4d8"/>
+                <path d="M50 28 C40 12, 35 15, 45 30 Z" fill="#00b4d8"/>
+                <ellipse cx="48" cy="50" rx="35" ry="25" fill="#90e0ef" stroke="#0077b6" stroke-width="3"/>
+                <path d="M35 45 Q38 48 35 52" stroke="#00b4d8" stroke-width="2" fill="none"/>
+                <path d="M42 43 Q45 46 42 50" stroke="#00b4d8" stroke-width="2" fill="none"/>
+                <path d="M49 45 Q52 48 49 52" stroke="#00b4d8" stroke-width="2" fill="none"/>
+                <path id="smarty-mouth" d="M68 53 Q75 58 72 48" stroke="#03045e" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="68" cy="40" r="8" fill="white" stroke="#0077b6" stroke-width="2"/>
+                <circle id="smarty-eye-pupil" cx="70" cy="40" r="4.5" fill="#03045e"/>
+                <circle cx="72" cy="38" r="1.5" fill="white"/>
+                <circle cx="60" cy="52" r="4.5" fill="#ffb703" opacity="0.6"/>
+            </svg>
+        </div>
+
+        <!-- 1. MAIN MENU SCREEN (5 Missions according to image) -->
+        <div id="screen-menu" class="screen-state active">
+            <h2 class="menu-title">แผนผังด่านกิจกรรม TYPING ADVENTURE 🗺️</h2>
+            <p class="menu-subtitle">เด็ก ๆ ป.2 มาพิชิตภารกิจสลักปุ่มชิฟต์วิเศษให้ผ่านครบ 5 ระดับกันเถอะ!</p>
+            
+            <div class="mission-grid">
+                <!-- MISSION 1 -->
+                <div class="mission-card" onclick="triggerRegister('mission1')">
+                    <span class="mission-badge">ด่านที่ 1</span>
+                    <span class="mission-card-icon">⌨️</span>
+                    <h3>รู้จักแป้นพิมพ์</h3>
+                    <p>ค้นหาและทดลองกดปุ่มตัวอักษรแถวหลัก</p>
+                    <button class="btn-start">ลุยเลย!</button>
+                </div>
+                <!-- MISSION 2 -->
+                <div class="mission-card" onclick="triggerRegister('mission2')">
+                    <span class="mission-badge">ด่านที่ 2</span>
+                    <span class="mission-card-icon">🔍</span>
+                    <h3>ตามหาตัวอักษร</h3>
+                    <p>เกมสุ่มหาตำแหน่งปุ่มกดตัวอักษรให้เร็วที่สุด</p>
+                    <button class="btn-start">ลุยเลย!</button>
+                </div>
+                <!-- MISSION 3 -->
+                <div class="mission-card" onclick="triggerRegister('mission3')">
+                    <span class="mission-badge" style="background-color: var(--primary);">ด่านที่ 3</span>
+                    <span class="mission-card-icon">🔠</span>
+                    <h3>แยกพิมพ์ใหญ่-เล็ก</h3>
+                    <p>ฝึกใช้ปุ่ม Shift สลับข้างเพื่อขึ้นตัวอักษรใหญ่</p>
+                    <button class="btn-start">ลุยเลย!</button>
+                </div>
+                <!-- MISSION 4 -->
+                <div class="mission-card" onclick="triggerRegister('mission4')">
+                    <span class="mission-badge" style="background-color: #059669;">ด่านที่ 4</span>
+                    <span class="mission-card-icon">🐱</span>
+                    <h3>นักพิมพ์มือใหม่</h3>
+                    <p>ฝึกพิมพ์ศัพท์สั้น ป.2 เช่น cat, dog, sun</p>
+                    <button class="btn-start">ลุยเลย!</button>
+                </div>
+                <!-- MISSION 5 -->
+                <div class="mission-card" onclick="triggerRegister('mission5')">
+                    <span class="mission-badge" style="background-color: var(--accent-orange);">ด่านที่ 5</span>
+                    <span class="mission-card-icon">⏱️</span>
+                    <h3>นักพิมพ์คล่อง</h3>
+                    <p>สอบประเมินพิมพ์ประโยค จับเวลา 1 นาที</p>
+                    <button class="btn-start" style="background-color: var(--accent);">ท้าทายสอบ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. REGISTRATION SCREEN -->
+        <div id="screen-register" class="screen-state">
+            <h2 style="color: var(--primary); font-weight: 800; font-size: 26px; margin-bottom: 10px;">ลงทะเบียนนักสำรวจ ป.2 🐬</h2>
+            <p style="color: #475569; margin-bottom: 20px; font-size: 18px;">ระบุข้อมูลเพื่อเก็บประวัติคะแนนของห้องเรียนครูกัณฑิมา</p>
+            
+            <div class="input-group">
+                <label for="student-name">ชื่อ - นามสกุล</label>
+                <input type="text" id="student-name" placeholder="เด็กหญิง แก้วตา พากเพียร" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label for="student-no">เลขที่</label>
+                <input type="number" id="student-no" placeholder="ตัวเลขเลขที่ เช่น 9" min="1" max="50">
+            </div>
+            
+            <button class="btn-large" onclick="submitRegister()">พร้อมทำภารกิจแล้ว!</button>
+            <button class="btn-back-menu" onclick="switchScreen('screen-menu')">ย้อนกลับ</button>
+        </div>
+
+        <!-- 3. GAMEPLAY SCREEN -->
+        <div id="screen-gameplay" class="screen-state">
+            <div class="stats-bar">
+                <div class="stat-item" id="stat-time-container">
+                    <div class="stat-label">⏳ เวลาคงเหลือ</div>
+                    <div class="stat-value" id="stat-time">60 วินาที</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">🎯 ภารกิจปัจจุบัน</div>
+                    <div class="stat-value" id="stat-mission-name" style="font-size:18px; color: var(--primary);">Mission 1</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">⭐ ความถูกต้อง</div>
+                    <div class="stat-value" id="stat-accuracy">100%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">🚀 ความเร็วอักขระ</div>
+                    <div class="stat-value" id="stat-speed">0 CPM</div>
+                </div>
+            </div>
+
+            <!-- Highly visible text display for kids -->
+            <div class="typing-prompt-box" id="typing-prompt">
+                <!-- Characters rendering -->
+            </div>
+
+            <div class="finger-guide-box" id="finger-guide">
+                💡 <span id="finger-guide-text">เตรียมพร้อมนิ้วมือสัมผัสบนแถวตั้งหลัก</span>
+            </div>
+
+            <!-- Enlarged Virtual Keyboard -->
+            <div class="keyboard" id="virtual-keyboard">
+                <!-- Row 1 -->
+                <div class="keyboard-row">
+                    <button class="key" data-key="char" data-char="Q">Q</button>
+                    <button class="key" data-key="char" data-char="W">W</button>
+                    <button class="key" data-key="char" data-char="E">E</button>
+                    <button class="key" data-key="char" data-char="R">R</button>
+                    <button class="key" data-key="char" data-char="T">T</button>
+                    <button class="key" data-key="char" data-char="Y">Y</button>
+                    <button class="key" data-key="char" data-char="U">U</button>
+                    <button class="key" data-key="char" data-char="I">I</button>
+                    <button class="key" data-key="char" data-char="O">O</button>
+                    <button class="key" data-key="char" data-char="P">P</button>
+                </div>
+                <!-- Row 2 -->
+                <div class="keyboard-row">
+                    <button class="key" data-key="char" data-char="A">A</button>
+                    <button class="key" data-key="char" data-char="S">S</button>
+                    <button class="key" data-key="char" data-char="D">D</button>
+                    <button class="key" data-key="char" data-char="F">F</button>
+                    <button class="key" data-key="char" data-char="G">G</button>
+                    <button class="key" data-key="char" data-char="H">H</button>
+                    <button class="key" data-key="char" data-char="J">J</button>
+                    <button class="key" data-key="char" data-char="K">K</button>
+                    <button class="key" data-key="char" data-char="L">L</button>
+                </div>
+                <!-- Row 3 -->
+                <div class="keyboard-row">
+                    <button class="key" data-key="shift-l" id="key-shift-l">Shift ⇧</button>
+                    <button class="key" data-key="char" data-char="Z">Z</button>
+                    <button class="key" data-key="char" data-char="X">X</button>
+                    <button class="key" data-key="char" data-char="C">C</button>
+                    <button class="key" data-key="char" data-char="V">V</button>
+                    <button class="key" data-key="char" data-char="B">B</button>
+                    <button class="key" data-key="char" data-char="N">N</button>
+                    <button class="key" data-key="char" data-char="M">M</button>
+                    <button class="key" data-key="shift-r" id="key-shift-r">Shift ⇧</button>
+                </div>
+                <!-- Row 4 -->
+                <div class="keyboard-row">
+                    <button class="key" data-key="space" id="key-space">Spacebar (เว้นวรรค)</button>
+                </div>
+            </div>
+
+            <button class="btn-back-menu" onclick="quitGame()" style="margin-top: 20px;">ออกภารกิจ</button>
+        </div>
+
+        <!-- 4. RESULT CERTIFICATE SCREEN -->
+        <div id="screen-result" class="screen-state">
+            <h2 style="color: var(--primary); font-weight: 800; font-size: 28px; margin-bottom: 5px;">🎉 ภารกิจสำเร็จสิ้นสุด!</h2>
+            <p style="color: #475569; margin-bottom: 20px; font-size: 18px;">เด็ก ๆ ทำได้ยอดเยี่ยมมาก ผ่านระดับบทเรียนสำเร็จแล้วค่ะ</p>
+
+            <div class="cert-card">
+                <div class="cert-medal" id="cert-medal">🥇</div>
+                <div class="cert-title">เกียรติบัตรนักพิมพ์ขุมทรัพย์ปุ่มวิเศษ</div>
+                <div class="cert-sub">ระดับชั้นประถมศึกษาปีที่ 2</div>
+                <div class="cert-name" id="cert-name">เด็กหญิง แก้วตา พากเพียร</div>
+                <p style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #475569;">
+                    ผ่านเกณฑ์ภารกิจ: <span id="cert-mode" style="color: #0369a1; font-weight: 800;">Mission 5 นักพิมพ์คล่อง</span>
+                </p>
+                <div class="cert-score-grid">
+                    <div class="cert-score-box">
+                        <div style="font-size: 14px; color: #78350f; font-weight: bold;">ความแม่นยำ</div>
+                        <div class="cert-score-val" id="cert-accuracy" style="color: #10b981;">95%</div>
+                    </div>
+                    <div class="cert-score-box">
+                        <div style="font-size: 14px; color: #78350f; font-weight: bold;">ความเร็ว (CPM)</div>
+                        <div class="cert-score-val" id="cert-cpm" style="color: #0369a1;">55</div>
+                    </div>
+                    <div class="cert-score-box">
+                        <div style="font-size: 14px; color: #78350f; font-weight: bold;">ความเร็ว (WPM)</div>
+                        <div class="cert-score-val" id="cert-wpm" style="color: #92400e;">11</div>
+                    </div>
+                </div>
+                <p style="font-size: 16px; color: #b45309; font-weight: bold;">ลงชื่อ: นางสาวกัณฑิมา บุญเรือน - ครูผู้สอน</p>
+            </div>
+
+            <button class="btn-large" onclick="switchScreen('screen-menu')">กลับหน้ารวมด่าน</button>
+        </div>
+
+        <!-- 5. TEACHER PANEL -->
+        <div id="teacher-panel" class="screen-state">
+            <h2 style="color: var(--primary); font-weight: 800; font-size: 26px; margin-bottom: 5px;">📊 ระบบติดตามพัฒนาการ (Tracking System)</h2>
+            <p style="color: #475569; margin-bottom: 20px; font-size: 18px;">ข้อมูลผลคะแนนนักเรียนประเมินรายบุคคลประจำห้องเรียน</p>
+
+            <div class="dash-table-container">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th width="10%">เลขที่</th>
+                            <th width="30%">ชื่อ-นามสกุล</th>
+                            <th width="20%">ระดับภารกิจ</th>
+                            <th width="15%">ความถูกต้อง (%)</th>
+                            <th width="15%">ความเร็ว (CPM / WPM)</th>
+                            <th width="10%">รางวัล</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Data rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dash-actions">
+                <button class="btn-action btn-action-primary" onclick="exportCSV()">ดาวน์โหลดไฟล์สรุปคะแนน Excel (.csv) 📊</button>
+                <button class="btn-action btn-action-danger" onclick="clearLeaderboard()">ล้างคะแนนทั้งหมด 🗑️</button>
+                <button class="btn-action btn-action-secondary" onclick="switchScreen('screen-menu')">กลับหน้าหลัก</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        ระบบติดตามและประเมินผลนวัตกรรม SMART TYPING ADVENTURE | ครูผู้สอน: นางสาวกัณฑิมา บุญเรือน
+    </footer>
+
+    <script>
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } else if (type === 'fanfare') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.connect(noteGain);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                    noteGain.gain.setValueAtTime(0.08, audioCtx.currentTime + idx * 0.1);
+                    noteGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.25);
+                    noteOsc.start(audioCtx.currentTime + idx * 0.1);
+                    noteOsc.stop(audioCtx.currentTime + idx * 0.1 + 0.25);
+                });
+            }
+        }
+
+        // Gameplay State
+        let selectedMission = 'mission1';
+        let currentText = '';
+        let currentIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let startTimeStamp = 0;
+        let timerInterval = null;
+        let timeRemaining = 60;
+        
+        let studentName = 'นักสำรวจปุ่มวิเศษ';
+        let studentNo = '0';
+
+        // Mission datasets
+        const datasets = {
+            mission1: "a s d f j k l ;",
+            mission2: "a d k s l j f",
+            mission3: "a A s S d D f F j J k K l L",
+            mission4: "cat dog sun pig ant",
+            mission5: "I love My Mom. A Big Cat."
+        };
+
+        const missionLabels = {
+            mission1: "Mission 1: รู้จักแป้นพิมพ์ (แถวตั้งหลัก)",
+            mission2: "Mission 2: ตามหาตัวอักษร",
+            mission3: "Mission 3: แยกพิมพ์ใหญ่-เล็ก (ปุ่ม Shift)",
+            mission4: "Mission 4: นักพิมพ์มือใหม่ (คำศัพท์สั้น)",
+            mission5: "Mission 5: นักพิมพ์คล่อง (ประเมินจับเวลา)"
+        };
+
+        // Smarty facial controls
+        function setSmartyMouth(pathD) {
+            document.getElementById('smarty-mouth').setAttribute('d', pathD);
+        }
+        function setSmartyMouthNormal() { setSmartyMouth("M68 53 Q75 58 72 48"); }
+        function setSmartyMouthSmile() { setSmartyMouth("M65 48 Q70 60 75 48"); }
+        function setSmartyMouthSad() { setSmartyMouth("M65 55 Q70 48 75 55"); }
+
+        function talkSmarty(text) {
+            document.getElementById('smarty-bubble').innerText = text;
+        }
+
+        // Navigate screens
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen-state').forEach(el => el.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            if (screenId === 'teacher-panel') loadLeaderboard();
+        }
+
+        function triggerRegister(missionId) {
+            selectedMission = missionId;
+            switchScreen('screen-register');
+            talkSmarty("ก่อนเริ่ม " + missionLabels[missionId] + " พิมพ์ชื่อเด็ก ๆ ก่อนนะ!");
+        }
+
+        function submitRegister() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            const noInput = document.getElementById('student-no').value.trim();
+            
+            if (!nameInput || !noInput) {
+                alert("กรุณากรอกชื่อและเลขที่ให้เรียบร้อยก่อนจ้า!");
+                return;
+            }
+            
+            studentName = nameInput;
+            studentNo = noInput;
+            setupGameplay();
+        }
+
+        // Setup loop
+        function setupGameplay() {
+            switchScreen('screen-gameplay');
+            document.getElementById('stat-mission-name').innerText = missionLabels[selectedMission];
+            
+            currentIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            startTimeStamp = Date.now();
+            currentText = datasets[selectedMission];
+            
+            // Check if timer is needed (Mission 5 Only)
+            if (selectedMission === 'mission5') {
+                document.getElementById('stat-time-container').style.display = 'block';
+                timeRemaining = 60;
+                document.getElementById('stat-time').innerText = "60 วินาที";
+                
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    document.getElementById('stat-time').innerText = timeRemaining + " วินาที";
+                    if (timeRemaining <= 0) endGame();
+                }, 1000);
+                talkSmarty("ด่านที่ 5 จับเวลาแล้ว! พิมพ์ประโยคด้านล่างให้ถูกต้องรวดเร็วที่สุดใน 1 นาที!");
+            } else {
+                document.getElementById('stat-time-container').style.display = 'none';
+                if (timerInterval) clearInterval(timerInterval);
+                talkSmarty("ผจญภัยด่าน " + selectedMission.replace('mission', '') + " วางนิ้วหลักแล้วกดแป้นพิมพ์ตามโจทย์ได้เลยจ้า!");
+            }
+            
+            renderPrompt();
+            highlightKeyGuide();
+        }
+
+        function renderPrompt() {
+            const promptBox = document.getElementById('typing-prompt');
+            promptBox.innerHTML = '';
+            
+            for (let i = 0; i < currentText.length; i++) {
+                const span = document.createElement('span');
+                span.innerText = currentText[i];
+                if (i < currentIndex) {
+                    span.className = 'char-correct';
+                } else if (i === currentIndex) {
+                    span.className = 'char-current';
+                } else {
+                    span.className = '';
+                }
+                promptBox.appendChild(span);
+            }
+        }
+
+        function highlightKeyGuide() {
+            document.querySelectorAll('.key').forEach(el => {
+                el.classList.remove('active-key');
+                el.classList.remove('shift-highlight');
+            });
+            
+            if (currentIndex >= currentText.length) return;
+            
+            const targetChar = currentText[currentIndex];
+            const fingerTextEl = document.getElementById('finger-guide-text');
+            
+            if (targetChar === ' ') {
+                document.getElementById('key-space').classList.add('active-key');
+                fingerTextEl.innerText = "กดปุ่ม [ Spacebar ] (วรรค) ด้วยนิ้วโป้ง";
+                return;
+            }
+            
+            const upperTarget = targetChar.toUpperCase();
+            const keyBtn = document.querySelector(`.key[data-char="${upperTarget}"]`);
+            
+            if (keyBtn) keyBtn.classList.add('active-key');
+            
+            const isUpper = (targetChar === targetChar.toUpperCase() && targetChar !== targetChar.toLowerCase());
+            
+            if (isUpper) {
+                const leftHandKeys = ['Q', 'W', 'E', 'R', 'T', 'A', 'S', 'D', 'F', 'G', 'Z', 'X', 'C', 'V'];
+                let shiftKeyId = '';
+                let guideFinger = '';
+                
+                if (leftHandKeys.includes(upperTarget)) {
+                    shiftKeyId = 'key-shift-r';
+                    guideFinger = "กดปุ่ม Shift ขวา ค้างไว้ (ด้วยนิ้วก้อยขวา) แล้วกดแป้น " + upperTarget;
+                } else {
+                    shiftKeyId = 'key-shift-l';
+                    guideFinger = "กดปุ่ม Shift ซ้าย ค้างไว้ (ด้วยนิ้วก้อยซ้าย) แล้วกดแป้น " + upperTarget;
+                }
+                
+                const shiftBtn = document.getElementById(shiftKeyId);
+                if (shiftBtn) shiftBtn.classList.add('shift-highlight');
+                
+                fingerTextEl.innerText = "⚠️ ตัวพิมพ์ใหญ่: " + guideFinger;
+            } else {
+                fingerTextEl.innerText = "กดปุ่มตัวพิมพ์เล็ก " + upperTarget + " ด้วยนิ้วสัมผัสปกติ (ไม่ต้องกด Shift)";
+            }
+        }
+
+        // Listener for Key Down
+        window.addEventListener('keydown', (e) => {
+            if (!document.getElementById('screen-gameplay').classList.contains('active')) return;
+            
+            if (e.key === ' ') e.preventDefault();
+            if (currentIndex >= currentText.length) return;
+            
+            const expectedChar = currentText[currentIndex];
+            
+            if (e.key === expectedChar) {
+                currentIndex++;
+                correctCount++;
+                playSound('success');
+                setSmartyMouthSmile();
+                setTimeout(setSmartyMouthNormal, 400);
+                updateLiveStats();
+                
+                if (currentIndex >= currentText.length) {
+                    if (selectedMission === 'mission5') {
+                        currentText += " " + datasets.mission5;
+                        renderPrompt();
+                        highlightKeyGuide();
+                    } else {
+                        endGame();
+                    }
+                } else {
+                    renderPrompt();
+                    highlightKeyGuide();
+                }
+            } else {
+                if (e.key.length === 1) {
+                    incorrectCount++;
+                    playSound('error');
+                    setSmartyMouthSad();
+                    setTimeout(setSmartyMouthNormal, 400);
+                    
+                    const spans = document.getElementById('typing-prompt').getElementsByTagName('span');
+                    if (spans[currentIndex]) {
+                        spans[currentIndex].className = 'char-incorrect';
+                        setTimeout(() => {
+                            if (spans[currentIndex]) spans[currentIndex].className = 'char-current';
+                        }, 250);
+                    }
+                    talkSmarty("พิมพ์สะกดคำไม่ตรงจ้า ลองพิมพ์ปุ่มแป้นใหม่อีกทีนะ!");
+                    updateLiveStats();
+                }
+            }
+        });
+
+        function updateLiveStats() {
+            const total = correctCount + incorrectCount;
+            const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 100;
+            document.getElementById('stat-accuracy').innerText = accuracy + "%";
+            
+            const timeElapsedMin = (Date.now() - startTimeStamp) / 60000;
+            if (timeElapsedMin > 0) {
+                const cpm = Math.round(correctCount / timeElapsedMin);
+                document.getElementById('stat-speed').innerText = cpm + " CPM";
+            }
+        }
+
+        function endGame() {
+            if (timerInterval) clearInterval(timerInterval);
+            playSound('fanfare');
+            
+            const total = correctCount + incorrectCount;
+            const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 100;
+            
+            const timeElapsedMin = (selectedMission === 'mission5') ? 1.0 : (Date.now() - startTimeStamp) / 60000;
+            const cpm = Math.round(correctCount / timeElapsedMin);
+            const wpm = Math.round(cpm / 5);
+            
+            document.getElementById('cert-name').innerText = studentName;
+            document.getElementById('cert-mode').innerText = missionLabels[selectedMission];
+            document.querySelectorAll('#cert-accuracy').forEach(el => el.innerText = accuracy + "%");
+            document.querySelectorAll('#cert-cpm').forEach(el => el.innerText = cpm);
+            document.querySelectorAll('#cert-wpm').forEach(el => el.innerText = wpm);
+            
+            let medal = '🥉 ทองแดง';
+            if (accuracy >= 90) medal = '🥇 ทอง';
+            else if (accuracy >= 80) medal = '🥈 เงิน';
+            
+            document.getElementById('cert-medal').innerText = medal.split(' ')[0];
+            talkSmarty("ยินดีด้วยสุดยอดนักสำรวจ! ผ่านด่านแล้วได้เหรียญ" + medal + " จ้า!");
+            
+            // Save results to classroom tracking database
+            saveResult(studentName, studentNo, missionLabels[selectedMission], accuracy, cpm, wpm, medal);
+            
+            switchScreen('screen-result');
+        }
+
+        function quitGame() {
+            if (timerInterval) clearInterval(timerInterval);
+            switchScreen('screen-menu');
+            talkSmarty("กลับสู่ฐานทัพผจญภัยแล้วจ้า พร้อมสู้ด่านไหนต่อดีนะ?");
+        }
+
+        function saveResult(name, no, mode, accuracy, cpm, wpm, medal) {
+            const record = {
+                name: name,
+                no: parseInt(no),
+                mode: mode,
+                accuracy: accuracy,
+                speed: cpm + " CPM (" + wpm + " WPM)",
+                medal: medal,
+                date: new Date().toLocaleString('th-TH')
+            };
+            
+            let leaderboard = JSON.parse(localStorage.getItem('smarty_leaderboard')) || [];
+            leaderboard.push(record);
+            leaderboard.sort((a, b) => a.no - b.no);
+            localStorage.setItem('smarty_leaderboard', JSON.stringify(leaderboard));
+        }
+
+        function loadLeaderboard() {
+            const tableBody = document.getElementById('leaderboard-body');
+            tableBody.innerHTML = '';
+            
+            let leaderboard = JSON.parse(localStorage.getItem('smarty_leaderboard')) || [];
+            
+            if (leaderboard.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #94a3b8;">ยังไม่มีผลคะแนนฝึกซ้อมของนักเรียนบันทึกอยู่ค่ะคุณครู</td></tr>';
+                return;
+            }
+            
+            leaderboard.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="bold">${r.no}</td>
+                    <td style="text-align: left;" class="bold">${r.name}</td>
+                    <td>${r.mode}</td>
+                    <td class="bold" style="color: #10b981;">${r.accuracy}%</td>
+                    <td class="bold" style="color: #0284c7;">${r.speed}</td>
+                    <td style="font-size: 20px;">${r.medal.split(' ')[0]}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function clearLeaderboard() {
+            if (confirm("ต้องการล้างประวัติบันทึกผลงานการพิมพ์ทั้งหมดเพื่อเตรียมรับชั่วโมงเรียนใหม่ใช่ไหมคะ?")) {
+                localStorage.removeItem('smarty_leaderboard');
+                loadLeaderboard();
+                talkSmarty("ล้างฐานข้อมูลคะแนนเรียบร้อยแล้วค่ะคุณครูกัณฑิมา!");
+            }
+        }
+
+        function exportCSV() {
+            let leaderboard = JSON.parse(localStorage.getItem('smarty_leaderboard')) || [];
+            if (leaderboard.length === 0) {
+                alert("ยังไม่มีประวัติคะแนนของห้องเรียนค่ะ");
+                return;
+            }
+            
+            let csvContent = "\ufeffเลขที่,ชื่อ-นามสกุล,ภารกิจด่าน,ความแม่นยำ(%),ความเร็ว (CPM/WPM),เหรียญรางวัล,วันเวลาสอบ\n";
+            leaderboard.forEach(r => {
+                csvContent += `${r.no},"${r.name}","${r.mode}",${r.accuracy},"${r.speed}","${r.medal}","${r.date}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `สรุปผลคะแนน_SmartTyping_ป2.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
